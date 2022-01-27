@@ -34,7 +34,7 @@ class Authentication{
       print('Error signing in: ${e.code}');
     }
   }
-  static Future<UserCredential?> loginWithGoogle()async{
+  static Future<User?> loginWithGoogle()async{
     try{
       final signInAccount = await GoogleSignIn().signIn();
       final signInAuthentication = await signInAccount?.authentication;
@@ -42,34 +42,40 @@ class Authentication{
           accessToken: signInAuthentication?.accessToken,
           idToken: signInAuthentication?.idToken
       );
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential? userCredential =  await FirebaseAuth.instance.signInWithCredential(credential);
+      return userCredential.user;
     }catch (e){
       print(e.toString());
     }
   }
 
-  static Future<UserCredential?> signInWithTwitter() async {
+  static Future<User?> signInWithTwitter() async {
     // Create a TwitterLogin instance
     // print(dotenv.env);
     // return null;
-    Map env = dotenv.env;
-    final twitterLogin = TwitterLogin(
-        apiKey: env['TWITTER_API_KEY']!,
-        apiSecretKey: env['TWITTER_S_KEY']!,
-        redirectURI: env['TWITTER_R_URI']!
-    );
+    try{
+      Map env = dotenv.env;
+      final twitterLogin = TwitterLogin(
+          apiKey: env['TWITTER_API_KEY']!,
+          apiSecretKey: env['TWITTER_S_KEY']!,
+          redirectURI: env['TWITTER_R_URI']!
+      );
 
-    // Trigger the sign-in flow
-    final authResult = await twitterLogin.login();
+      // Trigger the sign-in flow
+      final authResult = await twitterLogin.login();
 
-    // Create a credential from the access token
-    final twitterAuthCredential = TwitterAuthProvider.credential(
-      accessToken: authResult.authToken!,
-      secret: authResult.authTokenSecret!,
-    );
-    //
-    // // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(twitterAuthCredential);
+      // Create a credential from the access token
+      final twitterAuthCredential = TwitterAuthProvider.credential(
+        accessToken: authResult.authToken!,
+        secret: authResult.authTokenSecret!,
+      );
+      //
+      // // Once signed in, return the UserCredential
+      UserCredential? userCredential =  await FirebaseAuth.instance.signInWithCredential(twitterAuthCredential);
+      return userCredential.user;
+    }catch(e){
+      print(e.toString());
+    }
   }
   static Future<void> signout()async{
     await FirebaseAuth.instance.signOut();

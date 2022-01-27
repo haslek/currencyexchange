@@ -24,6 +24,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="currencyexchange">
+  <meta name="google-signin-client-id" content="536158095078">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <title>currencyexchange</title>
@@ -33,6 +34,21 @@
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <!-- Firebase Auth SDK -->
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+  <script>
+    var firebaseConfig ={
+      apiKey: 'AIzaSyAEB60kU6j2SA2f-xCCvlF7v56NZow_x_c',
+      appId: '1:536158095078:web:452eddd43e330cdce3dd27',
+      messagingSenderId: '536158095078',
+      projectId: 'flutter-curr',
+      authDomain: 'flutter-curr.firebaseapp.com',
+      storageBucket: 'flutter-curr.appspot.com',
+      measurementId: 'G-KK0JMKTZP6',
+    }
+    firebase.initializeApp(firebaseConfig);
+  </script>
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;

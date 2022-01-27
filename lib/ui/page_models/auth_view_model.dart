@@ -28,9 +28,17 @@ class AuthenticationViewModel extends BaseViewModel{
     await Authentication.signinWithEmail(email: 'hello@helloworld.com', password: 'password');
   }
   Future<void> signInWithGoogle()async{
-    await Authentication.loginWithGoogle();
+    User? user = await Authentication.loginWithGoogle();
+    if(user != null){
+      userProvider.user = user;
+      Provider.of<AppStateManager>(appContext!,listen: false).loggedIn = true;
+    }
   }
   Future<void> signInWithTwitter()async{
-    await Authentication.signInWithTwitter();
+    User? user = await Authentication.signInWithTwitter();
+    if(user != null){
+      userProvider.user = user;
+      Provider.of<AppStateManager>(appContext!,listen: false).loggedIn = true;
+    }
   }
 }
