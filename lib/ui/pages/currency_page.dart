@@ -66,10 +66,21 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                                     color: Colors.white.withOpacity(0.8),
                                   ),
                                 ),
-                                IconButton(
-                                    onPressed: model.displayCurrs,
-                                    color: Colors.white.withOpacity(0.3),
-                                    icon: const Icon(Icons.edit))
+                                Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: (){
+                                          model.displayCurrs(2);
+                                        },
+                                        color: Colors.white.withOpacity(0.3),
+                                        icon: const Icon(Icons.edit)),
+                                    const SizedBox(width: 5,),
+                                    IconButton(
+                                        onPressed: model.currencyProvider.fetchExchangeRate,
+                                        color: Colors.white.withOpacity(0.3),
+                                        icon: const Icon(Icons.refresh))
+                                  ],
+                                ),
                               ],
                             ),
                           )
@@ -77,7 +88,7 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                       ),
                     ),
                     SizedBox(
-                      height: size.height * 0.5,
+                      height: size.height * 0.45,
                       child: Consumer<CurrencyProvider>(
                         builder: (context,cProvider,_){
                           return cProvider.sExCurrencies.isEmpty ? const Center(
@@ -105,7 +116,7 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                                         children: [
                                           Text('1 ${cProvider.baseCurrency} :'),
                                           Text(cProvider.sExCurrencies[element].toString()+' $element',
-                                            style: TextStyle(color: Colors.white),
+                                            style: const TextStyle(color: Colors.white),
                                           )
                                         ],
                                       ),
@@ -116,6 +127,60 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                             ],
                           );
                         },
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.25,
+                      child: Column(
+                        children:  [
+                          Text('Currency Converter',style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.white.withOpacity(0.8)
+                          ),
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                  onTap: (){
+                                    model.displayCurrs(0);
+                                  },
+                                  child: Text(model.toConvert),
+                                ),
+                                InkWell(
+                                  onTap: model.switchCurr,
+                                  child: const Icon(Icons.compare_arrows_sharp),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    model.displayCurrs(1);
+                                  },
+                                  child: Text(model.convertedTo),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                            child: Divider(color: Colors.tealAccent,),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 10),
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.4),
+                                ),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Text(model.convert().toString()),
+                            ),
+                          )
+                        ],
                       ),
                     )
                   ],
