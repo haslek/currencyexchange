@@ -47,22 +47,22 @@ class CurrencyProvider extends ChangeNotifier{
     print(query);
     if(_allCurrencies.isNotEmpty){
       _allCurrencies.keys.forEach((element) {
-        if(element.contains(query)){
+        if(element.contains(query.toUpperCase())){
           res[element] = _allCurrencies[element];
         }
       });
       sCurrencies = res;
       loading = false;
-      print(sCurrencies);
+      // print(sCurrencies);
     }
   }
   void searchExchange(String query){
     loading = true;
     Map<String,dynamic> res={};
-    print(query);
+    // print(query);
     if(_exchangeRates.isNotEmpty){
       _exchangeRates.keys.forEach((element) {
-        if(element.contains(query)){
+        if(element.contains(query.toUpperCase())){
           res[element] = _exchangeRates[element];
         }
       });
@@ -73,7 +73,7 @@ class CurrencyProvider extends ChangeNotifier{
   Future<void> fetchCurrencies()async{
     String url = 'https://openexchangerates.org/api/currencies.json';
     Map response = await APIManager.getAPICall(url: url);
-    print('currencies: ${response["data"] is Map<String,dynamic>}');
+    // print('currencies: ${response["data"] is Map<String,dynamic>}');
     if(response['status']){
       // print('hello');
       _allCurrencies = response['data'];
@@ -85,13 +85,25 @@ class CurrencyProvider extends ChangeNotifier{
   Future<void> fetchExchangeRate()async{
     String apiKey = dotenv.env['FREECURAPI']!;
     String url = 'https://freecurrencyapi.net/api/v2/latest?apikey=$apiKey&base_currency=$_baseCurrency';
-    print('url: $url');
+    // print('url: $url');
     Map response = await APIManager.getAPICall(url: url);
-    print('exchange rates: $response');
+    // print('exchange rates: $response');
     if(response['status']){
       _exchangeRates = response['data']['data'];
       _searchExCurrencies = _exchangeRates;
       notifyListeners();
+    }
+  }
+  Future<void> fetchHistoricalData() async{
+    String apiKey = dotenv.env['FREECURAPI']!;
+    String url = 'https://freecurrencyapi.net/api/v2/historical?apikey=$apiKey&base_currency=$_baseCurrency';
+    // print('url: $url');
+    Map response = await APIManager.getAPICall(url: url);
+    print('history rates: $response');
+    if(response['status']){
+      // _exchangeRates = response['data']['data'];
+      // _searchExCurrencies = _exchangeRates;
+      // notifyListeners();
     }
   }
 }

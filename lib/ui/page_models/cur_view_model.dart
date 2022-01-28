@@ -69,7 +69,7 @@ class CurrencyPageViewModel extends BaseViewModel{
     }
     double tRate = currencyProvider.exchangeRates[toConvert];
     double cRate = currencyProvider.exchangeRates[convertedTo];
-    return tRate/cRate;
+    return cRate/tRate;
   }
   void displayCurrs(int whichField)async{
     await showDialog(context: appContext!,
@@ -89,7 +89,7 @@ class CurrencyPageViewModel extends BaseViewModel{
             ],
       ),
       children: cProvider.sCurrencies.keys.map<SimpleDialogOption>((key) => SimpleDialogOption(
-            onPressed: (){
+            onPressed: () async {
               switch(whichField){
                 case 0:
                   toConvert = key;
@@ -100,6 +100,7 @@ class CurrencyPageViewModel extends BaseViewModel{
                 default:
                   cProvider.baseCurrency = key;
                   baseCurrency = key;
+                  await currencyProvider.fetchExchangeRate();
                   break;
               }
               cProvider.sCurrencies = cProvider.currencies;

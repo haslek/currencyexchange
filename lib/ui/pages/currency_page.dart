@@ -9,8 +9,8 @@ import '../pages.dart';
 class CurrencyDashboard extends StatefulWidget {
   static MaterialPage page() {
     return MaterialPage(
-      name: AppPages.authPage,
-      key: ValueKey(AppPages.authPage),
+      name: AppPages.curPage,
+      key: ValueKey(AppPages.curPage),
       child: const CurrencyDashboard(),
     );
   }
@@ -52,19 +52,45 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  "Base Currency: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
-                                ),
-                                Text(
-                                  model.baseCurrency!,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white.withOpacity(0.8),
-                                  ),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Base Currency: ",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white.withOpacity(0.5),
+                                          ),
+                                        ),
+                                        Text(
+                                          model.baseCurrency!,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white.withOpacity(0.8),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    GestureDetector(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                          borderRadius: BorderRadius.circular(20)
+                                        ),
+                                        child: Text(
+                                          'View historical data for '+
+                                          model.baseCurrency!,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white.withOpacity(0.8),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                                 Row(
                                   children: [
@@ -91,17 +117,23 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                       height: size.height * 0.45,
                       child: Consumer<CurrencyProvider>(
                         builder: (context,cProvider,_){
-                          return cProvider.sExCurrencies.isEmpty ? const Center(
+                          return cProvider.exchangeRates.isEmpty ? const Center(
                             child: Text('No exchange data for currency selected yet'),
                           ):
                           Column(
                             children: [
                               Flexible(
                                 flex:3,
-                                child: TextFormField(
-                                  onChanged: cProvider.searchExchange,
-                                  decoration: const InputDecoration(
-                                      hintText: 'Enter search queries here'
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 5),
+                                  child: TextFormField(
+                                    onChanged: cProvider.searchExchange,
+                                    decoration:  InputDecoration(
+                                        hintText: 'Enter search queries here',
+                                      hintStyle: TextStyle(
+                                        color: Colors.white.withOpacity(0.1)
+                                      )
+                                    ),
                                   ),
                                 ),
                               ),
@@ -110,15 +142,23 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                                 child: ListView(
                                   children: cProvider.sExCurrencies.keys.map((element) {
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('1 ${cProvider.baseCurrency} :'),
-                                          Text(cProvider.sExCurrencies[element].toString()+' $element',
-                                            style: const TextStyle(color: Colors.white),
-                                          )
-                                        ],
+                                      padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 2),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(color: Colors.yellowAccent)
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('${cProvider.baseCurrency} / $element :',
+                                              style:  TextStyle(color: Colors.white.withOpacity(0.3)),),
+                                            Text(cProvider.sExCurrencies[element].toString(),
+                                              style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     );
                                   }).toList(),
@@ -148,7 +188,8 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                                   onTap: (){
                                     model.displayCurrs(0);
                                   },
-                                  child: Text(model.toConvert),
+                                  child: Text(model.toConvert,
+                                    style: TextStyle(color: Colors.white.withOpacity(0.3),fontWeight: FontWeight.bold),),
                                 ),
                                 InkWell(
                                   onTap: model.switchCurr,
@@ -158,7 +199,7 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                                   onTap: (){
                                     model.displayCurrs(1);
                                   },
-                                  child: Text(model.convertedTo),
+                                  child: Text(model.convertedTo,style: TextStyle(color: Colors.white.withOpacity(0.3),fontWeight: FontWeight.bold),),
                                 ),
                               ],
                             ),
@@ -177,7 +218,8 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                                 ),
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              child: Text(model.convert().toString()),
+                              child: Text(model.convert().toString(),
+                                style:  TextStyle(color: Colors.yellowAccent.shade100,fontWeight: FontWeight.bold),),
                             ),
                           )
                         ],
