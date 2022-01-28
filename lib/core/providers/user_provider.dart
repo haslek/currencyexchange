@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 class UserProvider extends ChangeNotifier{
   UserCredential? _userCredential;
   UserCredential? get userCredential => _userCredential;
+
   set userCredential(UserCredential? u){
     _userCredential = u;
     notifyListeners();

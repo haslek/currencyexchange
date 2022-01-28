@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttercurr/ui/pages/currency_page.dart';
+import 'package:fluttercurr/core/providers/app_state_manager.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:twitter_login/twitter_login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:fluttercurr/firebase_options.dart';
 
 class Authentication{
   static Future<User?> initialize() async{
@@ -22,19 +20,24 @@ class Authentication{
     // }
     return user;
   }
-  static Future<UserCredential?> signinWithEmail({required String email,required String password,bool newUser = false})async{
+  static Future<bool> signinWithEmail(BuildContext context,{required String email,required String password,bool newUser = false})async{
     try{
       UserCredential credential = newUser
           ? await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email,
           password: password)
           : await FirebaseAuth.instance.signInWithEmailAndPassword(email: email,
           password: password);
-      return credential;
+      if(credential?.user != null){
+        return true;
+      }
+      Provider.of<AppStateManager>(context,listen: false).curError = "Error occurred";
+      return false;
     } on FirebaseAuthException catch(e){
-      print('Error signing in: ${e.code}');
+      Provider.of<AppStateManager>(context,listen: false).curError = e.message;
+      return false;
     }
   }
-  static Future<User?> loginWithGoogle()async{
+  static Future<bool> loginWithGoogle(BuildContext context)async{
     try{
       final signInAccount = await GoogleSignIn().signIn();
       final signInAuthentication = await signInAccount?.authentication;
@@ -43,13 +46,18 @@ class Authentication{
           idToken: signInAuthentication?.idToken
       );
       UserCredential? userCredential =  await FirebaseAuth.instance.signInWithCredential(credential);
-      return userCredential.user;
-    }catch (e){
-      print(e.toString());
+      if(userCredential?.user != null){
+        return true;
+      }
+      Provider.of<AppStateManager>(context,listen: false).curError = "Error occurred";
+      return false;
+    } on FirebaseAuthException catch(e){
+      Provider.of<AppStateManager>(context,listen: false).curError = e.message;
+      return false;
     }
   }
 
-  static Future<User?> signInWithTwitter() async {
+  static Future<bool> signInWithTwitter(BuildContext context) async {
     // Create a TwitterLogin instance
     // print(dotenv.env);
     // return null;
@@ -58,26 +66,34 @@ class Authentication{
       final twitterLogin = TwitterLogin(
           apiKey: env['TWITTER_API_KEY']!,
           apiSecretKey: env['TWITTER_S_KEY']!,
-          redirectURI: env['TWITTER_R_URI']!
+          redirectURI: 'flutter-curr://'
       );
 
+      print(twitterLogin);
       // Trigger the sign-in flow
       final authResult = await twitterLogin.login();
 
+      print(authResult.status.toString());
       // Create a credential from the access token
       final twitterAuthCredential = TwitterAuthProvider.credential(
         accessToken: authResult.authToken!,
         secret: authResult.authTokenSecret!,
       );
+      print(twitterAuthCredential);
       //
       // // Once signed in, return the UserCredential
       UserCredential? userCredential =  await FirebaseAuth.instance.signInWithCredential(twitterAuthCredential);
-      return userCredential.user;
-    }catch(e){
-      print(e.toString());
+      if(userCredential?.user != null){
+        return true;
+      }
+      Provider.of<AppStateManager>(context,listen: false).curError = "Error occurred";
+      return false;
+    } on FirebaseAuthException catch(e){
+      Provider.of<AppStateManager>(context,listen: false).curError = e.message;
+      return false;
     }
   }
-  static Future<void> signout()async{
+  static Future<void> signOut()async{
     await FirebaseAuth.instance.signOut();
   }
 }

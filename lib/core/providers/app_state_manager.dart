@@ -4,10 +4,12 @@ class AppStateManager extends ChangeNotifier{
   bool _isInitialized = false;
   bool _loggedIn = false;
   bool _history = false;
+  String? _curError;
 
   bool get initialized => _isInitialized;
   bool get loggedIn => _loggedIn;
   bool get history => _history;
+  String? get curError => _curError;
 
   set loggedIn(bool v){
     _loggedIn = v;
@@ -19,6 +21,10 @@ class AppStateManager extends ChangeNotifier{
   }
   set history(bool v){
     _history = v;
+    notifyListeners();
+  }
+  set curError(String? v){
+    _curError = v;
     notifyListeners();
   }
 

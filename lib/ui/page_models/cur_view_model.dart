@@ -5,6 +5,7 @@ import 'package:fluttercurr/base/base_view_model.dart';
 import 'package:fluttercurr/core/providers/app_state_manager.dart';
 import 'package:fluttercurr/core/providers/currency_provider.dart';
 import 'package:fluttercurr/core/providers/user_provider.dart';
+import 'package:fluttercurr/core/utils/auth.dart';
 import 'package:provider/provider.dart';
 
 class CurrencyPageViewModel extends BaseViewModel{
@@ -44,6 +45,33 @@ class CurrencyPageViewModel extends BaseViewModel{
     if(currencyProvider.exchangeRates.isEmpty){
       await currencyProvider.fetchExchangeRate();
     }
+  }
+  Future<void> showLogoutDialog() async {
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
+      onPressed:  () {
+        Navigator.of(appContext!).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Log Out",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue),),
+      onPressed:  signOut,
+    );
+    AlertDialog alert = AlertDialog(
+      title: const Text("Log Out",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+      content: const Text("Are you sure to log out?"),
+      backgroundColor: Colors.white,
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    showDialog(context: appContext!,useRootNavigator: false, builder: (context)=>alert);
+  }
+  void signOut()async{
+    await Authentication.signOut();
+    Provider.of<AppStateManager>(appContext!,listen: false).loggedIn = false;
   }
   void switchCurr(){
     String tempHolder = _toConvert;
