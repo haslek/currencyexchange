@@ -30,7 +30,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         builder: (context, model, _) {
           return Scaffold(
               backgroundColor: Colors.blue.shade200,
-              body: model.initialized
+              body: model.initialized && !model.isLoading
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

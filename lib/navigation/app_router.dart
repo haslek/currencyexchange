@@ -29,6 +29,8 @@ class AppRouter extends RouterDelegate with ChangeNotifier,
           CurrencyDashboard.page(),
         if(appStateManager.loggedIn && appStateManager.history)
           HistoricalData.page(),
+        if(appStateManager.loggedIn && appStateManager.convert)
+          CurrencyConverterPage.page(),
       ],
     );
   }
@@ -40,9 +42,9 @@ class AppRouter extends RouterDelegate with ChangeNotifier,
     if(route.settings.name == AppPages.histPage){
       appStateManager.history = false;
     }
-    // if(route.settings.name == AppPages.curPage){
-    //   appStateManager.history = false;
-    // }
+    if(route.settings.name == AppPages.convertPage){
+      appStateManager.convert = false;
+    }
     return true;
   }
 

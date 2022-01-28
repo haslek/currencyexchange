@@ -13,8 +13,15 @@ class CurrencyPageViewModel extends BaseViewModel{
   String? _baseCurrency;
   String _toConvert = '';
   String get toConvert => _toConvert;
+  TextEditingController amountController = TextEditingController(text: '0');
   set toConvert(String v){
     _toConvert = v;
+    notifyListeners();
+  }
+  String _amountText = '0';
+  String get amountText => _amountText;
+  set amountText(String v){
+    _amountText = v;
     notifyListeners();
   }
   String _convertedTo = '';
@@ -80,24 +87,61 @@ class CurrencyPageViewModel extends BaseViewModel{
     notifyListeners();
   }
   double convert(){
+    double amount = double.parse(amountController.text);
     if(toConvert == convertedTo){
-      return 1;
+      return amount;
+    }
+    if(amount == 0){
+      return amount;
     }
     if(currencyProvider.exchangeRates.isEmpty ||
         currencyProvider.exchangeRates[toConvert] == null ||
         currencyProvider.exchangeRates[convertedTo] == null
     ){
       if(toConvert == baseCurrency && currencyProvider.exchangeRates[convertedTo] != null){
-        return currencyProvider.exchangeRates[convertedTo];
+        return amount * currencyProvider.exchangeRates[convertedTo];
       }
       if(convertedTo == baseCurrency && currencyProvider.exchangeRates[toConvert] != null){
-        return 1/currencyProvider.exchangeRates[toConvert];
+        return 1/(currencyProvider.exchangeRates[toConvert]* amount);
       }
       return 0;
     }
-    double tRate = currencyProvider.exchangeRates[toConvert];
+    double tRate = amount * currencyProvider.exchangeRates[toConvert];
     double cRate = currencyProvider.exchangeRates[convertedTo];
+    print(amount);
     return cRate/tRate;
+  }
+  void displayAmountDialog()async{
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
+      onPressed:  () {
+        Navigator.of(appContext!).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Continue",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue),),
+      onPressed:  (){
+        convert();
+        Navigator.pop(appContext!);
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: const Text("Currency Size",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+      content: TextFormField(
+        controller: amountController,
+        keyboardType: TextInputType.number,
+        onChanged: (str){
+          amountText = str;
+        },
+      ),
+      backgroundColor: Colors.white,
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    showDialog(context: appContext!,useRootNavigator: false, builder: (context)=>alert);
   }
   void displayCurrs(int whichField)async{
     await showDialog(context: appContext!,

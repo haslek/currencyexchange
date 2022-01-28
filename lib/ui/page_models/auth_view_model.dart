@@ -39,18 +39,23 @@ class AuthenticationViewModel extends BaseViewModel{
   }
   Future<void> onReady(BuildContext context) async {
     appContext = context;
+    isLoading = true;
     userProvider = Provider.of<UserProvider>(context,listen: false);
     appStateManager = Provider.of<AppStateManager>(appContext!,listen: false);
+
     User? user = await Authentication.initialize();
     if(user != null){
       userProvider.user = user;
       appStateManager.loggedIn = true;
     }
+    isLoading = false;
     initialized = true;
   }
   Future<void> signInWithEmail()async{
+    isLoading = true;
     bool resp = await Authentication.signinWithEmail(appContext!,email: emailController.text,
         password: passController.text,newUser: _newUser);
+    isLoading = false;
     if(resp){
       userProvider.user = FirebaseAuth.instance.currentUser;
       appStateManager.loggedIn = true;
@@ -59,7 +64,9 @@ class AuthenticationViewModel extends BaseViewModel{
     }
   }
   Future<void> signInWithGoogle()async{
+    isLoading = true;
     bool resp  = await Authentication.loginWithGoogle(appContext!);
+    isLoading = false;
     if(resp){
       userProvider.user = FirebaseAuth.instance.currentUser;
       appStateManager.loggedIn = true;
@@ -68,7 +75,9 @@ class AuthenticationViewModel extends BaseViewModel{
     }
   }
   Future<void> signInWithTwitter()async{
+    isLoading = true;
     bool resp = await Authentication.signInWithTwitter(appContext!);
+    isLoading = false;
     if(resp){
       userProvider.user = FirebaseAuth.instance.currentUser;
       appStateManager.loggedIn = true;

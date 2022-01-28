@@ -8,16 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Authentication{
   static Future<User?> initialize() async{
-
     User? user = FirebaseAuth.instance.currentUser;
-    print(user.toString());
-    // if(user != null){
-    //   Navigator.of(context).pushReplacement(
-    //     MaterialPageRoute(builder: (context)=>CurrencyDashboard(
-    //       user: user,
-    //     )),
-    //   );
-    // }
     return user;
   }
   static Future<bool> signinWithEmail(BuildContext context,{required String email,required String password,bool newUser = false})async{
@@ -27,7 +18,7 @@ class Authentication{
           password: password)
           : await FirebaseAuth.instance.signInWithEmailAndPassword(email: email,
           password: password);
-      if(credential?.user != null){
+      if(credential.user != null){
         return true;
       }
       Provider.of<AppStateManager>(context,listen: false).curError = "Error occurred";
@@ -46,7 +37,7 @@ class Authentication{
           idToken: signInAuthentication?.idToken
       );
       UserCredential? userCredential =  await FirebaseAuth.instance.signInWithCredential(credential);
-      if(userCredential?.user != null){
+      if(userCredential.user != null){
         return true;
       }
       Provider.of<AppStateManager>(context,listen: false).curError = "Error occurred";
@@ -69,21 +60,21 @@ class Authentication{
           redirectURI: 'flutter-curr://'
       );
 
-      print(twitterLogin);
+      // print(twitterLogin);
       // Trigger the sign-in flow
       final authResult = await twitterLogin.login();
 
-      print(authResult.status.toString());
+      // print(authResult.status.toString());
       // Create a credential from the access token
       final twitterAuthCredential = TwitterAuthProvider.credential(
         accessToken: authResult.authToken!,
         secret: authResult.authTokenSecret!,
       );
-      print(twitterAuthCredential);
+      // print(twitterAuthCredential);
       //
       // // Once signed in, return the UserCredential
       UserCredential? userCredential =  await FirebaseAuth.instance.signInWithCredential(twitterAuthCredential);
-      if(userCredential?.user != null){
+      if(userCredential.user != null){
         return true;
       }
       Provider.of<AppStateManager>(context,listen: false).curError = "Error occurred";
