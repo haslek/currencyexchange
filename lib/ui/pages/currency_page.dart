@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttercurr/base/base_view.dart';
+import 'package:fluttercurr/core/providers/app_state_manager.dart';
 import 'package:fluttercurr/core/providers/currency_provider.dart';
 import 'package:fluttercurr/ui/page_models/cur_view_model.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +75,9 @@ class _CurrencyDashboardState extends State<CurrencyDashboard> {
                                     ),
                                     const SizedBox(height: 10,),
                                     GestureDetector(
+                                      onTap: (){
+                                        Provider.of<AppStateManager>(context,listen: false).history = true;
+                                      },
                                       child: Container(
                                         padding: const EdgeInsets.all(5),
                                         decoration: BoxDecoration(

@@ -29,6 +29,12 @@ class CurrencyProvider extends ChangeNotifier{
     _searchCurrencies = c;
     notifyListeners();
   }
+  Map<String,dynamic> _history = {};
+  Map<String,dynamic> get history => _history;
+  set history(Map<String,dynamic> c){
+    _history = c;
+    notifyListeners();
+  }
   Map<String,dynamic> _searchExCurrencies = {};
   Map<String,dynamic> get sExCurrencies => _searchExCurrencies;
   set sExCurrencies(Map<String,dynamic> c){
@@ -94,16 +100,18 @@ class CurrencyProvider extends ChangeNotifier{
       notifyListeners();
     }
   }
-  Future<void> fetchHistoricalData() async{
+  Future<void> fetchHistoricalData(String date,{String? curr}) async{
+    curr ??= _baseCurrency;
     String apiKey = dotenv.env['FREECURAPI']!;
-    String url = 'https://freecurrencyapi.net/api/v2/historical?apikey=$apiKey&base_currency=$_baseCurrency';
+    String url = 'https://freecurrencyapi.net/api/v2/historical?apikey=$apiKey&base_currency=$curr&date_from=$date&date_to=$date';
     // print('url: $url');
     Map response = await APIManager.getAPICall(url: url);
     print('history rates: $response');
-    if(response['status']){
-      // _exchangeRates = response['data']['data'];
-      // _searchExCurrencies = _exchangeRates;
-      // notifyListeners();
+    if(response['status'] && response['data']!= null){
+      _history = response['data']['data'][date];
+    }else{
+      _history = {};
     }
+    notifyListeners();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:fluttercurr/core/providers/app_state_manager.dart';
+import 'package:fluttercurr/core/providers/providers.dart';
+import 'package:fluttercurr/ui/pages.dart';
 import '../ui/pages/screens.dart';
 
 class AppRouter extends RouterDelegate with ChangeNotifier,
@@ -26,6 +27,8 @@ class AppRouter extends RouterDelegate with ChangeNotifier,
           AuthenticationScreen.page(),
         if(appStateManager.loggedIn)
           CurrencyDashboard.page(),
+        if(appStateManager.loggedIn && appStateManager.history)
+          HistoricalData.page(),
       ],
     );
   }
@@ -34,6 +37,12 @@ class AppRouter extends RouterDelegate with ChangeNotifier,
     if(!route.didPop(result)) {
       return false;
     }
+    if(route.settings.name == AppPages.histPage){
+      appStateManager.history = false;
+    }
+    // if(route.settings.name == AppPages.curPage){
+    //   appStateManager.history = false;
+    // }
     return true;
   }
 
