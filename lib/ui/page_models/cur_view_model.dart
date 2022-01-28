@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -48,10 +50,12 @@ class CurrencyPageViewModel extends BaseViewModel{
     if(currencyProvider.currencies.isEmpty){
       await currencyProvider.fetchCurrencies();
     }
-
-    if(currencyProvider.exchangeRates.isEmpty){
+    Timer.periodic(const Duration(minutes: 5), (timer)async {
       await currencyProvider.fetchExchangeRate();
-    }
+    });
+    // if(currencyProvider.exchangeRates.isEmpty){
+    //
+    // }
   }
   Future<void> showLogoutDialog() async {
     Widget cancelButton = TextButton(
